@@ -1,4 +1,4 @@
-﻿/* 
+﻿ /* 
  * Copyright (c) 2012 Research In Motion Limited. 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
- 
 using System;
 using System.Net;
 using System.IO;
@@ -28,12 +27,10 @@ using System.Text;
  * This sample program demonstrates how to get system information to make an authenticated API call. If successful, the
  * program then optionally creates a user and optionally displays the user's details. If the authenticated API is not
  * successful, the program displays a message indicating that the failure has occurred.
- *
- * Copyright © 1998-2012 Research In Motion Ltd.
  * 
- * This program was tested against the BlackBerry Enterprise Server(BES) for Microsoft Exchange version 5.0.3.
- * 
+ * This program was tested against the BlackBerry Device Service version 6.0.0.
  */
+
 
 namespace Rim.Bws.Samples
 {
@@ -43,7 +40,8 @@ namespace Rim.Bws.Samples
         private static BWSUtilService bwsUtilService;
 
         // The request Metadata information.
-        private const string ClientVersion = "5.0.3";
+        // This is the version of the WSDL used to generate the proxy, not the version of the server.	
+        private const string ClientVersion = "6.0.0";
 
         /*
          * To use a different locale, call getLocales() in the BWSUtilService web service
@@ -62,7 +60,7 @@ namespace Rim.Bws.Samples
         private const string Password = "<password>"; // e.g. Password = "password".
 
         /*
-         * NOTE About Exact String Searching: To use an email address as the search criteria for an exact string match 
+         * Note about exact String Searching: To use an email address as the search criteria for an exact string match 
          * search, it must be enclosed in double-quotes e.g. \"user01@example.net\". Enclosing search criteria in 
          * double-quotes causes an exact string match search to be performed.
          * 
@@ -98,9 +96,9 @@ namespace Rim.Bws.Samples
 
             bwsService = new BWSService();
             bwsUtilService = new BWSUtilService();
-
-            bwsService.Url = "https://" + BWSHostName + "/enterprise/admin/ws?wsdl";
-            bwsUtilService.Url = "https://" + BWSHostName + "/enterprise/admin/util/ws?wsdl";
+            // URLs for the web services. This URL points to the main web service page.
+            bwsService.Url = "https://" + BWSHostName + "/enterprise/admin/ws";
+            bwsUtilService.Url = "https://" + BWSHostName + "/enterprise/admin/util/ws";
 
             // Set the connection timeout to 60 seconds.
             bwsService.Timeout = 60000;
@@ -648,7 +646,7 @@ namespace Rim.Bws.Samples
              * Flags that are used to determine whether or not 
              * CreateUser() and DisplayUserDetails() gets called.
              */
-            bool createNewUser = false;
+            bool createNewUser = true;
             bool displayUserDetails = true;
 
             /* 

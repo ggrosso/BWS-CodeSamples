@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
- 
 import com.rim.ws.enterprise.admin.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,7 +29,7 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPException;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 
-/**
+/*
  * SampleBwsClient.java
  * 
  * A program that demonstrates BlackBerry Web Services (BWS) for Enterprise Administration APIs.
@@ -39,12 +38,10 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
  * program then optionally creates a user and optionally displays the user's details. If the authenticated API is not
  * successful, the program displays a message indicating that the failure has occurred.
  * 
- * Copyright © 1998-2012 Research In Motion Ltd.
  * 
- * This program was tested against the BlackBerry Enterprise Server(BES) for Microsoft Exchange version 5.0.3.
- * 
- */
-
+ * This program was tested against the BlackBerry Device Service version 6.0.0.
+ */ 
+ 
 public class SampleBwsClient
 {
 	private static BWSService _bwsService;
@@ -52,8 +49,9 @@ public class SampleBwsClient
 	private static BWSUtilService _bwsUtilService;
 	private static BWSUtil _bwsUtil;
 
-	// The request Metadata information.
-	private final static String CLIENT_VERSION = "5.0.3";
+	// The request Metadata information. 
+	// This is the version of the WSDL used to generate the proxy, not the version of the server.
+	private final static String CLIENT_VERSION = "6.0.0";
 	
 	/* 
 	 * To use a different locale, call getLocales() in the BWSUtilService web service
@@ -71,8 +69,9 @@ public class SampleBwsClient
 	private final static String USERNAME = "<username>"; // e.g. USERNAME = "admin".	
 	private final static String PASSWORD = "<password>"; // e.g. PASSWORD = "password".
 
+
 	/*
-	 * NOTE About Exact String Searching: To use an email address as the search criteria for an exact string match
+	 * Note about exact String searching: To use an email address as the search criteria for an exact string match
 	 * search, it must be enclosed in double-quotes e.g. \"user01@example.net\". Enclosing search criteria in
 	 * double-quotes causes an exact string match search to be performed.
 	 * 
@@ -105,7 +104,6 @@ public class SampleBwsClient
 		final String METHOD_NAME = "setup()";
 		System.err.format("Entering %s%n", METHOD_NAME);
 		boolean returnValue = false;
-
 		REQUEST_METADATA.setClientVersion(CLIENT_VERSION);
 		REQUEST_METADATA.setLocale(LOCALE);
 		REQUEST_METADATA.setOrganizationUid(ORG_UID);
@@ -115,21 +113,30 @@ public class SampleBwsClient
 
 		try
 		{
-			bwsServiceUrl = new URL("https://" + BWS_HOST_NAME + "/enterprise/admin/ws?wsdl");
-			bwsUtilServiceUrl = new URL("https://" + BWS_HOST_NAME + "/enterprise/admin/util/ws?wsdl");
+			// These are the URLs that point to the web services used for all calls.
+			bwsServiceUrl = new URL("https://" + BWS_HOST_NAME + "/enterprise/admin/ws");
+			bwsUtilServiceUrl = new URL("https://" + BWS_HOST_NAME + "/enterprise/admin/util/ws");
 		}
 		catch (MalformedURLException e)
 		{
+
 			System.err.format("Cannot initialize wsdl urls%n");
 			System.err.format("Exiting %s with value \"%s\"%n", METHOD_NAME, returnValue);
 			return returnValue;
 		}
 
 		// Initialize the BWS web service stubs that will be used for all calls.
-		_bwsService = new BWSService(bwsServiceUrl);
-		_bws = _bwsService.getBWS();
-		_bwsUtilService = new BWSUtilService(bwsUtilServiceUrl);
-		_bwsUtil = _bwsUtilService.getBWSUtil();
+		QName serviceBWS = new QName("http://ws.rim.com/enterprise/admin", "BWSService");
+		QName portBWS = new QName("http://ws.rim.com/enterprise/admin", "BWS");
+		_bwsService = new BWSService(null, serviceBWS);
+		_bwsService.addPort(portBWS, "http://schemas.xmlsoap.org/soap/", bwsServiceUrl.toString());
+		_bws = _bwsService.getPort(portBWS,BWS.class);
+		
+		QName serviceUtil = new QName("http://ws.rim.com/enterprise/admin", "BWSUtilService");
+		QName portUtil = new QName("http://ws.rim.com/enterprise/admin", "BWSUtil");
+		_bwsUtilService = new BWSUtilService(null, serviceUtil);
+		_bwsUtilService.addPort(portUtil, "http://schemas.xmlsoap.org/soap/", bwsUtilServiceUrl.toString());
+		_bwsUtil = _bwsUtilService.getPort(portUtil, BWSUtil.class);
 
 		// Set the connection timeout to 60 seconds.
 		HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
@@ -414,7 +421,7 @@ public class SampleBwsClient
 					UserDetail userDetail = individualResponse.getUserDetail();
 
 					System.out.format("User details:%n");
-
+					// The values of the fields, and whether they will be populated or not, depends on the device type.
 					System.out.format("Display Name: %s%n", userDetail.getDisplayName());
 					System.out.format("User UID: %s%n", individualResponse.getUserUid());
 					// Displays time in UTC format.
